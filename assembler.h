@@ -1,6 +1,16 @@
-#include <stdio.h>
-#include "stack.h"
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
-int my_converter(FILE* open_file, struct Stack* stk);
+#include <stdio.h>
+
+int converter(FILE* open_file);
+
+char* read_file(FILE* open_file);
+long file_size(FILE* open_file);
+int find_spaces(const char* str);
+int skip_spaces(const char* str);
+
+enum INPUT_COMMANDS check_if(const char* data);
+
+int shift(const char* str);
+
 #endif

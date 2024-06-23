@@ -1,37 +1,31 @@
-#include "assembler.h"
-#include "stack.h"
 #include <stdio.h>
 #include <stdlib.h>
-enum INPUT_TASKS{
-    DIV  = -3,
-    HTL  = -2,
-    SUB  = -1,
-    OUT  =  0,
-    PUSH =  1,
-    ADD  =  2,
-    MUL  =  3,
-    POP  =  4,
-};
+#include <strings.h>
+#include <ctype.h>
+#include <assert.h>
+#include "assembler.h"
 
-// TODO: zabotay git submodules for Perun's sake
-
-#if 0
-struct commands{
-    const char* str;
-    enum INPUT_TASKS encoding;
-};
-
-struct commands cmds[] = {{"push", PUSH}, {"add", ADD}, {"div", DIV}, {"htl", HTL, {"out", OUT}, {"sub", SUB}, {"mul", MUL}, {"pop", POP}};
-
-size_t str_len = strlen(str);
-for (int i = 0; i < sizeof(cmds); ++i)
+enum INPUT_COMMANDS
 {
-    if (str_len == strlen(cmds[i].str) && !strcmp(str, cmds[i].str))
-    {
-        output_buff[output_i] = cmds[i].encoding;
-    }
-}
-#endif
+    HTL,
+    OUT,
+    SUB,
+    DIV,
+    ADD,
+    MUL,
+    POP,
+    PUSH,
+    N_COMMANDS,
+    INVALID = -1,
+};
+
+struct commands
+{
+    const char* str;
+    enum INPUT_COMMANDS encoding;
+};
+
+struct commands cmds[] = {{"push", PUSH}, {"add", ADD}, {"div", DIV}, {"htl", HTL}, {"out", OUT}, {"sub", SUB}, {"mul", MUL}, {"pop", POP}};
 
 long file_size(FILE* open_file)
 {
@@ -43,12 +37,104 @@ long file_size(FILE* open_file)
 }
 char* read_file(FILE* open_file)
 {
+    long file_sz = file_size(open_file);
+    char* data = (char*) calloc(file_sz+1, sizeof(char));
+    fread(data, sizeof(char), file_sz, open_file);
+    return data;
+}
+
+int find_spaces(const char* str)
+{
+    assert(str);
+    for (int i = 0; str[i] != 0; i++)
+    {
+        if (isspace(str[i])) return i;
+ 
+    }
+    return INVALID;
+}
+
+int skip_spaces(const char* str)
+{
+    assert(str);
+    for (int i = 0; str[i] != 0; i++)
+    {
+        if (!isspace(str[i])) return i;
+ 
+    }
+    return INVALID;
+}
+
+#if 0
+enum INPUT_COMMANDS check_if(const char* data)
+{
+    for (int i = 0; i < N_COMMANDS; i++)
+    {
+        if (!strcmp(data, cmds[i].str)) return cmds[i].encoding;
+    }
+    return INVALID;
+}
+
+int shift(const char* str)
+{
+    int length = strlen(str);
+    return length;
+}
+
+int converter(FILE* open_file)
+{   
+    char* data = read_file(open_file);
+    long file_sz = file_size(open_file);
+    if (data == NULL) return INVALID;
+    char* ptr = data;
+    
+    char* output_data = malloc(file_sz);
+    char* out_ptr = output_data; 
+
+    while (*ptr != '\0')
+    {
+        int start_i = skip_spaces(ptr);
+        if (start_i == -1) return -1;
+        ptr += start_i;
+
+        int stop_i = find_spaces(ptr);
+        if (stop_i == -1) return -1;
+        char* end_ptr = ptr + stop_i;
+
+        *end_ptr = '\0';
+        
+        enum INPUT_COMMANDS encoding = check_if(ptr);
+        ptr = end_ptr + 1;
+
+        output_data[out_ptr] = encoding;
+
+        out_ptr += shift(encoding);
+
+        if (encoding == INVALID) return INVALID;
+        
+        else if (encoding == PUSH || encoding == POP)
+        {
+            if (start_i) == -1 return INVALID;
+            
+            int arg = strtol(ptr, &end_ptr, 10);
+            
+        }
+
+       
+    }
+
+}
+#endif
+
+#if 0
+char* read_file(FILE* open_file)
+{
     // open and close file right here, not in main or anywhere else
     char* data = (char*) calloc(file_size(open_file)+1, sizeof(char));
     fread(data, sizeof(char), file_size(open_file), open_file);
     return data;
 }
-#if 0
+
 int my_converter(FILE* open_file)
 {   
     char* data = read_file(open_file)
@@ -62,9 +148,7 @@ int my_converter(FILE* open_file)
 
     }
 }
-#endif
 
-#if 0
 char* output_buff = ....;
 *output_buff = PUSH;
 output_buff++;
