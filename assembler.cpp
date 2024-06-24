@@ -87,53 +87,49 @@ int converter(FILE* open_file)
     while (*ptr != '\0')
     {
         int start_i = skip_spaces(ptr);
-        if (start_i == -1) return -1;
+        if (start_i == -1) 
+        {
+            return -1;
+            free(data);
+        }
+
         ptr += start_i;
 
         int stop_i = find_spaces(ptr);
-        if (stop_i == -1) return -1;
+        if (stop_i == -1) 
+        {
+            return -1;
+            free(data);
+        }
+
         char* end_ptr = ptr + stop_i;
 
         *end_ptr = '\0';
         
         enum INPUT_COMMANDS encoding = get_encoding(ptr);
-        if (encoding == INVALID) return INVALID;
+        if (encoding == INVALID) 
+        {
+            return INVALID;
+            free(data);
+        }
         ptr = end_ptr + 1;
 
-        output_ptr = *(encoding);
+        out_ptr = *(encoding);
 
         out_ptr += strlen(encoding);
 
         else if (encoding == PUSH || encoding == POP)
         {
-            if (start_i) == -1 return -1;
+            if (start_i) == -1 
+            {
+                return -1;
+                free(data);
+            }
             
             int arg = strtol(ptr, &end_ptr, 10);
-            
+            out_ptr = *(arg);
+            out_ptr += 4;
         }
-
-       
     }
 
 }
-
-#if 0
-int my_converter(FILE* open_file)
-{   
-    char* data = read_file(open_file)
-    for (int i = 0; i < filesize(open_file); i++)
-    {
-        if (data[i] == ' ')
-        {
-            data[i] == '\0';
-            str
-        }
-
-    }
-}
-
-char* output_buff = ....;
-*output_buff = PUSH;
-output_buff++;
-*((int*)output_buff) = 4; <=> int x = 4; memcpy(output_buff, &x, sizeof(int));
-#endif
