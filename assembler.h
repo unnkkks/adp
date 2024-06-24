@@ -9,8 +9,7 @@ long file_size(FILE* open_file);
 int find_spaces(const char* str);
 int skip_spaces(const char* str);
 
-enum INPUT_COMMAND check_if(const char* data);
+enum INPUT_COMMAND get_encoding(const char* data);
 
-int shift(const char* str);
 
 #endif
