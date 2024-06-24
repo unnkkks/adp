@@ -17,16 +17,29 @@ long file_size(FILE* open_file)
 {
     long orig_pos = ftell(open_file);
     fseek(open_file, 0, SEEK_END);
+
     long end_pos = ftell(open_file);
     fseek(open_file, orig_pos, SEEK_SET);
+
     return end_pos;  
 }
-char* read_file(FILE* open_file)
-{
+
+buffer read_file(const char* filename, const char* mode)
+{   
+    FILE* open_file = fopen(filename, mode);
+    struct buffer invalid = {NULL, 0};
+    if (fopen(filename, mode) == NULL) return invalid;
+
     long file_sz = file_size(open_file);
     char* data = (char*) calloc(file_sz+1, sizeof(char));
+    if (data == NULL) return invalid;
+
     fread(data, sizeof(char), file_sz, open_file);
-    return data;
+    struct buffer cur_buffer = {data, file_sz};
+
+    fclose(open_file);
+
+    return cur_buffer;
 }
 
 int find_spaces(const char* str)
@@ -66,13 +79,13 @@ const char* get_str(enum INPUT_COMMAND encoding)
     {
         if (encoding == cmds[i].encoding) return cmds[i].str;
     }
-    return "INVALID";
+    return NULL;
 }
 
 int converter(FILE* open_file)
 {   
     char* data = read_file(open_file);
-    if (data == NULL) return INVALID;
+    if (data == NULL) return -1;
     long file_sz = file_size(open_file);
     char* ptr = data;
     
