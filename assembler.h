@@ -1,4 +1,4 @@
-#ifndef ASSEMBLER_H
+#ifndef ASSEMBLER_H 
 #define ASSEMBLER_H
 #include <stdio.h>
 
@@ -9,7 +9,7 @@ long file_size(FILE* open_file);
 int find_spaces(const char* str);
 int skip_spaces(const char* str);
 
-enum INPUT_COMMANDS check_if(const char* data);
+enum INPUT_COMMAND check_if(const char* data);
 
 int shift(const char* str);
 

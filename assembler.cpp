@@ -5,7 +5,7 @@
 #include <assert.h>
 #include "assembler.h"
 
-enum INPUT_COMMANDS
+enum INPUT_COMMAND
 {
     HTL,
     OUT,
@@ -19,13 +19,13 @@ enum INPUT_COMMANDS
     INVALID = -1,
 };
 
-struct commands
+struct command
 {
     const char* str;
-    enum INPUT_COMMANDS encoding;
+    enum INPUT_COMMAND encoding;
 };
 
-struct commands cmds[] = {{"push", PUSH}, {"add", ADD}, {"div", DIV}, {"htl", HTL}, {"out", OUT}, {"sub", SUB}, {"mul", MUL}, {"pop", POP}};
+struct command cmds[] = {{"push", PUSH}, {"add", ADD}, {"div", DIV}, {"htl", HTL}, {"out", OUT}, {"sub", SUB}, {"mul", MUL}, {"pop", POP}};
 
 long file_size(FILE* open_file)
 {
@@ -51,7 +51,7 @@ int find_spaces(const char* str)
         if (isspace(str[i])) return i;
  
     }
-    return INVALID;
+    return -1;
 }
 
 int skip_spaces(const char* str)
@@ -62,11 +62,10 @@ int skip_spaces(const char* str)
         if (!isspace(str[i])) return i;
  
     }
-    return INVALID;
+    return -1;
 }
 
-#if 0
-enum INPUT_COMMANDS check_if(const char* data)
+enum INPUT_COMMANDS get_encoding(const char* data)
 {
     for (int i = 0; i < N_COMMANDS; i++)
     {
@@ -75,17 +74,11 @@ enum INPUT_COMMANDS check_if(const char* data)
     return INVALID;
 }
 
-int shift(const char* str)
-{
-    int length = strlen(str);
-    return length;
-}
-
 int converter(FILE* open_file)
 {   
     char* data = read_file(open_file);
-    long file_sz = file_size(open_file);
     if (data == NULL) return INVALID;
+    long file_sz = file_size(open_file);
     char* ptr = data;
     
     char* output_data = malloc(file_sz);
@@ -103,18 +96,17 @@ int converter(FILE* open_file)
 
         *end_ptr = '\0';
         
-        enum INPUT_COMMANDS encoding = check_if(ptr);
+        enum INPUT_COMMANDS encoding = get_encoding(ptr);
+        if (encoding == INVALID) return INVALID;
         ptr = end_ptr + 1;
 
-        output_data[out_ptr] = encoding;
+        output_ptr = *(encoding);
 
-        out_ptr += shift(encoding);
+        out_ptr += strlen(encoding);
 
-        if (encoding == INVALID) return INVALID;
-        
         else if (encoding == PUSH || encoding == POP)
         {
-            if (start_i) == -1 return INVALID;
+            if (start_i) == -1 return -1;
             
             int arg = strtol(ptr, &end_ptr, 10);
             
@@ -124,17 +116,8 @@ int converter(FILE* open_file)
     }
 
 }
-#endif
 
 #if 0
-char* read_file(FILE* open_file)
-{
-    // open and close file right here, not in main or anywhere else
-    char* data = (char*) calloc(file_size(open_file)+1, sizeof(char));
-    fread(data, sizeof(char), file_size(open_file), open_file);
-    return data;
-}
-
 int my_converter(FILE* open_file)
 {   
     char* data = read_file(open_file)
