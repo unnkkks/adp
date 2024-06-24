@@ -1,23 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include <ctype.h>
 #include <assert.h>
 #include "assembler.h"
-
-enum INPUT_COMMAND
-{
-    HTL,
-    OUT,
-    SUB,
-    DIV,
-    ADD,
-    MUL,
-    POP,
-    PUSH,
-    N_COMMANDS,
-    INVALID = -1,
-};
 
 struct command
 {
@@ -65,13 +51,22 @@ int skip_spaces(const char* str)
     return -1;
 }
 
-enum INPUT_COMMANDS get_encoding(const char* data)
+enum INPUT_COMMAND get_encoding(const char* data)
 {
     for (int i = 0; i < N_COMMANDS; i++)
     {
         if (!strcmp(data, cmds[i].str)) return cmds[i].encoding;
     }
     return INVALID;
+}
+
+const char* get_str(enum INPUT_COMMAND encoding)
+{
+    for (int i = 0; i < N_COMMANDS; i++)
+    {
+        if (encoding == cmds[i].encoding) return cmds[i].str;
+    }
+    return "INVALID";
 }
 
 int converter(FILE* open_file)
@@ -81,7 +76,7 @@ int converter(FILE* open_file)
     long file_sz = file_size(open_file);
     char* ptr = data;
     
-    char* output_data = malloc(file_sz);
+    char* output_data = (char*)malloc(file_sz);
     char* out_ptr = output_data; 
 
     while (*ptr != '\0')
@@ -106,7 +101,7 @@ int converter(FILE* open_file)
 
         *end_ptr = '\0';
         
-        enum INPUT_COMMANDS encoding = get_encoding(ptr);
+        enum INPUT_COMMAND encoding = get_encoding(ptr);
         if (encoding == INVALID) 
         {
             return INVALID;
@@ -114,22 +109,25 @@ int converter(FILE* open_file)
         }
         ptr = end_ptr + 1;
 
-        out_ptr = *(encoding);
+        *out_ptr = encoding;
 
-        out_ptr += strlen(encoding);
+        const char* str_encoding = get_str(encoding);
 
-        else if (encoding == PUSH || encoding == POP)
+        out_ptr += strlen(str_encoding);
+
+        if (encoding == PUSH || encoding == POP)
         {
-            if (start_i) == -1 
+            if (start_i == -1) 
             {
                 return -1;
                 free(data);
             }
             
             int arg = strtol(ptr, &end_ptr, 10);
-            out_ptr = *(arg);
+            *out_ptr = arg;
             out_ptr += 4;
         }
     }
 
+    return *((int*)out_ptr);
 }

@@ -9,7 +9,22 @@ long file_size(FILE* open_file);
 int find_spaces(const char* str);
 int skip_spaces(const char* str);
 
+enum INPUT_COMMAND
+{
+    HTL,
+    OUT,
+    SUB,
+    DIV,
+    ADD,
+    MUL,
+    POP,
+    PUSH,
+    N_COMMANDS,
+    INVALID = -1,
+};
+
 enum INPUT_COMMAND get_encoding(const char* data);
+const char* get_str(enum INPUT_COMMAND encoding);
 
 
 #endif

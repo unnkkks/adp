@@ -13,6 +13,8 @@ int main()
         return 1;
     }
     printf("|%s|\n", read_buffer);
+    
+    free(read_buffer);
 
     fclose(open_file);
 }
