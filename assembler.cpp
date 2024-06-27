@@ -24,7 +24,7 @@ long file_size(FILE* open_file)
     return end_pos;  
 }
 
-buffer read_file(const char *restrict filename, const char *restrict mode)
+buffer read_file(const char * filename, const char* mode)
 {   
     FILE* open_file = fopen(filename, mode);
     struct buffer invalid = {NULL, 0};
@@ -73,23 +73,16 @@ enum INPUT_COMMAND get_encoding(const char* data)
     return INVALID;
 }
 
-const char* get_str(enum INPUT_COMMAND encoding)
-{
-    for (int i = 0; i < N_COMMANDS; i++)
-    {
-        if (encoding == cmds[i].encoding) return cmds[i].str;
-    }
-    return NULL;
-}
 
-int converter(FILE* open_file)
+char* converter(FILE* open_file)
 {   
     char* data = read_file(open_file);
-    if (data == NULL) return -1;
+    if (data == NULL) return NULL;
     long file_sz = file_size(open_file);
     char* ptr = data;
     
-    char* output_data = (char*)malloc(file_sz);
+    char* output_data = (char*)malloc(file_sz*4);
+    if (output_data == NULL) return NULL;
     char* out_ptr = output_data; 
 
     while (*ptr != '\0')
@@ -97,8 +90,9 @@ int converter(FILE* open_file)
         int start_i = skip_spaces(ptr);
         if (start_i == -1) 
         {
-            return -1;
             free(data);
+            return NULL;
+            
         }
 
         ptr += start_i;
@@ -106,8 +100,8 @@ int converter(FILE* open_file)
         int stop_i = find_spaces(ptr);
         if (stop_i == -1) 
         {
-            return -1;
             free(data);
+            return NULL;
         }
 
         char* end_ptr = ptr + stop_i;
@@ -117,30 +111,28 @@ int converter(FILE* open_file)
         enum INPUT_COMMAND encoding = get_encoding(ptr);
         if (encoding == INVALID) 
         {
-            return INVALID;
             free(data);
+            return INVALID;
         }
         ptr = end_ptr + 1;
 
         *out_ptr = encoding;
 
-        const char* str_encoding = get_str(encoding);
-
-        out_ptr += strlen(str_encoding);
+        out_ptr += sizeof(char);
 
         if (encoding == PUSH || encoding == POP)
         {
             if (start_i == -1) 
             {
-                return -1;
                 free(data);
+                return NULL;
             }
             
             int arg = strtol(ptr, &end_ptr, 10);
-            *out_ptr = arg;
+            *((int*)out_ptr) = arg;
             out_ptr += 4;
         }
     }
 
-    return *((int*)out_ptr);
+    return out_ptr;
 }

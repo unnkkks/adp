@@ -31,9 +31,8 @@ int find_spaces(const char* str);
 int skip_spaces(const char* str);
 
 enum INPUT_COMMAND get_encoding(const char* data);
-const char* get_str(enum INPUT_COMMAND encoding);
 
-buffer read_file(const char *restrict filename, const char *restrict mode);
+buffer read_file(const char* filename, const char* mode);
 
 
 #endif
