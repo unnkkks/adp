@@ -24,7 +24,7 @@ long file_size(FILE* open_file)
     return end_pos;  
 }
 
-buffer read_file(const char* filename, const char* mode)
+buffer read_file(const char *restrict filename, const char *restrict mode)
 {   
     FILE* open_file = fopen(filename, mode);
     struct buffer invalid = {NULL, 0};

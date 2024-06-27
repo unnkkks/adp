@@ -18,8 +18,8 @@ enum INPUT_COMMAND
 
 struct buffer
 {
-    char* ptr_buf;
-    size_t buf_size;
+    char* ptr;
+    size_t size;
 };
 
 int converter(FILE* open_file);
@@ -33,7 +33,7 @@ int skip_spaces(const char* str);
 enum INPUT_COMMAND get_encoding(const char* data);
 const char* get_str(enum INPUT_COMMAND encoding);
 
-buffer read_file(const char* filename, const char* mode);
+buffer read_file(const char *restrict filename, const char *restrict mode);
 
 
 #endif

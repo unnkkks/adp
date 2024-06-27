@@ -6,7 +6,7 @@ int main()
 {
     buffer read_buffer = read_file("assembler.txt", "rb");
 
-    if (read_buffer == {NULL, 0})
+    if (read_buffer.ptr == NULL)
     {
         fprintf(stderr, "The file can't be opened");
         return 1;
