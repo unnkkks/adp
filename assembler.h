@@ -1,4 +1,4 @@
-#ifndef ASSEMBLER_H 
+#ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 #include <stdio.h>
 
@@ -22,7 +22,7 @@ struct buffer
     size_t size;
 };
 
-int converter(FILE* open_file);
+char* converter(char* filename);
 
 char* read_file(FILE* open_file);
 long file_size(FILE* open_file);
